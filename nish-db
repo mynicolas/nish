@@ -7,30 +7,15 @@ from getpass import getpass
 db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
 def render(instances):
-    print 'index\tname\t\taddress\t\tport\tusername'
+    print 'index\taddress\t\tport\tusername\tname'
     if instances:
         order = 1
         for i in instances:
-            print str(order) + '\t' + i['host'] + '\t\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user']
+            print str(order) + '\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user'] + '\t\t' + i['host']
             order += 1
 
 # add a new instance
 def add(args):
-#    s = args[1][1].split(':') 
-#    username_and_key = s[0].split('^')
-#    password_and_address = s[1].split('@')
-#
-#    username = username_and_key[0]
-#    address = password_and_address[1]
-#    if len(username_and_key) >= 2:
-#	key = username_and_key[1]
-#        key_pass = password_and_address[0]
-#	password = ''
-#    else:
-#        key = ''
-#	key_pass = ''
-#	password = password_and_address[0]
-
     userkey_addrport = args[1][1].split('@')
     addr_port = userkey_addrport[1].split(':')
     user_key = userkey_addrport[0].split('^')
