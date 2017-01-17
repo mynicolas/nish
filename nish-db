@@ -11,7 +11,7 @@ def render(instances):
     if instances:
         order = 1
         for i in instances:
-            print str(order) + '\t' + i['host'] + '\t\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user'] + '\t' + i['key']
+            print str(order) + '\t' + i['host'] + '\t\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user'] + '\t\t\t' + i['key']
             order += 1
 
 # add a new instance
@@ -31,9 +31,9 @@ def add(data):
     os.chmod(filename, stat.S_IRWXU) 
 
 # remove an instance
-def remove():
-    db.remove(where('host') == options.name)
-    filename = os.path.expanduser('~') + '/ssh-server/' + options.name
+def remove(name):
+    db.remove(where('host') == name)
+    filename = os.path.expanduser('~') + '/ssh-server/' + name
     if os.path.exists(filename):
         os.remove(filename)
 
@@ -43,7 +43,7 @@ def get_list():
     render(instances)
 
 # edit an instance
-def edit():
+def edit(data):
     empty_keys = []
     for item in data:
         if not data[item]:
@@ -51,16 +51,16 @@ def edit():
     
     for i in empty_keys:
         data.pop(i)
-    db.update(data, where('host') == options.name)
+    db.update(data, where('host') == data['name'])
 
 # get an instance
-def get_one():
-    instance = db.search(where('host') == options.name)
+def get_one(name):
+    instance = db.search(where('host') == name)
     render(instance)
 
 # get an instance's password
-def get_pass():
-    instances = db.search(where('host') == options.name)
+def get_pass(name):
+    instances = db.search(where('host') == name)
     print 'host\t\tpassword\t\tkey-password'
     if instances:
         for i in instances:
@@ -70,16 +70,16 @@ parser = OptionParser()
 arg_parser= argparse.ArgumentParser(description='Change the option prefix charaters', prefix_chars=' ', add_help=True)
 
 arg_parser.add_argument(
-    "add",
+    "arg",
     action="store",
-    help="add one instance, add USER:PASS@IP or USER^PATH_TO_PRIVATE@IP"
+    help="add one instance, add NAME USER:PASS@IP PORT or NAME USER^PATH_TO_PRIVATE@IP PORT"
 )
 
 args = arg_parser.parse_known_args()
-#print args[0].add
+#print args[0].arg
 #print args[1][0]
 
-if args[0].add == 'add':
+if args[0].arg == 'add':
     s = args[1][1].split(':') 
     username_and_key = s[0].split('^')
     password_and_address = s[1].split('@')
@@ -105,6 +105,19 @@ if args[0].add == 'add':
 	'keypass': key_pass
     }
     add(data)
+
+if args[0].arg == 'list':
+    get_list()
+
+if args[0].arg == 'get':
+    get_one(args[1][0])
+
+if args[0].arg == 'pass':
+    get_pass(args[1][0])
+
+if args[0].arg == 'remove':
+    remove(args[1][0])
+
 
 #parser.add_option(
 #    "-g", "--get",
