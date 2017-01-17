@@ -2,6 +2,7 @@
 from tinydb import TinyDB,where
 import os,stat
 import argparse
+from getpass import getpass
 
 db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
@@ -15,25 +16,41 @@ def render(instances):
 
 # add a new instance
 def add(args):
-    s = args[1][1].split(':') 
-    username_and_key = s[0].split('^')
-    password_and_address = s[1].split('@')
+#    s = args[1][1].split(':') 
+#    username_and_key = s[0].split('^')
+#    password_and_address = s[1].split('@')
+#
+#    username = username_and_key[0]
+#    address = password_and_address[1]
+#    if len(username_and_key) >= 2:
+#	key = username_and_key[1]
+#        key_pass = password_and_address[0]
+#	password = ''
+#    else:
+#        key = ''
+#	key_pass = ''
+#	password = password_and_address[0]
 
-    username = username_and_key[0]
-    address = password_and_address[1]
-    if len(username_and_key) >= 2:
-	key = username_and_key[1]
-        key_pass = password_and_address[0]
+    userkey_addrport = args[1][1].split('@')
+    addr_port = userkey_addrport[1].split(':')
+    user_key = userkey_addrport[0].split('^')
+    if len(user_key) == 2:
+	key = user_key[1]
+	key_pass = getpass('enter private key password (default is None): ')
 	password = ''
     else:
-        key = ''
+	key = ''
 	key_pass = ''
-	password = password_and_address[0]
+	password = getpass('enter password: ')
+
+    username = user_key[0]
+    address = addr_port[0]
+    port = addr_port[1]
     
     data = {
 	'host': args[1][0],
 	'addr': address,
-	'port': args[1][2],
+	'port': port,
 	'user': username,
 	'pass': password,
 	'key': key,
@@ -86,10 +103,10 @@ def get_one(name):
 # get an instance's password
 def get_pass(name):
     instances = db.search(where('host') == name)
-    print 'host\t\tpassword\t\tkey-password'
+    print 'host\t\tpassword\t\tkey\t\tkey-password'
     if instances:
         for i in instances:
-            print i['host'] + '\t\t' + i['pass'] + '\t\t' + i['keypass']
+            print i['host'] + '\t\t' + i['pass'] + '\t\t' + i['key'] + '\t\t' + i['keypass']
 
 arg_parser= argparse.ArgumentParser(description='Change the option prefix charaters', prefix_chars=' ', add_help=True)
 
