@@ -1,0 +1,257 @@
+#!/usr/bin/env python
+from tinydb import TinyDB,where
+import os,stat
+from optparse import OptionParser
+import argparse
+
+db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
+
+def render(instances):
+    print 'index\thost\t\taddress\t\tport\tusername\t\tkey'
+    if instances:
+        order = 1
+        for i in instances:
+            print str(order) + '\t' + i['host'] + '\t\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user'] + '\t' + i['key']
+            order += 1
+
+# add a new instance
+def add(data):
+    db.insert(data)
+    private_key = ''
+    if data['key']:
+        private_key = ' -i ' + data['key']
+   
+    filename = os.path.expanduser('~') + '/ssh-server/' + data['host']
+    with open(filename, 'w') as server:
+        server.writelines([
+            '#!/usr/bin/env python\n',
+            '#-*- coding: utf-8 -*-\n',
+            'ssh' + private_key + ' ' + data['user'] + '@' + data['addr'] + ' -p ' + data['port']
+        ])
+    os.chmod(filename, stat.S_IRWXU) 
+
+# remove an instance
+def remove():
+    db.remove(where('host') == options.name)
+    filename = os.path.expanduser('~') + '/ssh-server/' + options.name
+    if os.path.exists(filename):
+        os.remove(filename)
+
+# get instances
+def get_list():
+    instances = db.all()
+    render(instances)
+
+# edit an instance
+def edit():
+    empty_keys = []
+    for item in data:
+        if not data[item]:
+            empty_keys.append(item)
+    
+    for i in empty_keys:
+        data.pop(i)
+    db.update(data, where('host') == options.name)
+
+# get an instance
+def get_one():
+    instance = db.search(where('host') == options.name)
+    render(instance)
+
+# get an instance's password
+def get_pass():
+    instances = db.search(where('host') == options.name)
+    print 'host\t\tpassword\t\tkey-password'
+    if instances:
+        for i in instances:
+            print i['host'] + '\t\t' + i['pass'] + '\t\t' + i['keypass']
+
+parser = OptionParser()
+arg_parser= argparse.ArgumentParser(description='Change the option prefix charaters', prefix_chars=' ', add_help=True)
+
+arg_parser.add_argument(
+    "add",
+    action="store",
+    help="add one instance, add USER:PASS@IP or USER^PATH_TO_PRIVATE@IP"
+)
+
+args = arg_parser.parse_known_args()
+#print args[0].add
+#print args[1][0]
+
+if args[0].add == 'add':
+    s = args[1][1].split(':') 
+    username_and_key = s[0].split('^')
+    password_and_address = s[1].split('@')
+
+    username = username_and_key[0]
+    address = password_and_address[1]
+    if len(username_and_key) >= 2:
+	key = username_and_key[1]
+        key_pass = password_and_address[0]
+	password = ''
+    else:
+        key = ''
+	key_pass = ''
+	password = password_and_address[0]
+    
+    data = {
+	'host': args[1][0],
+	'addr': address,
+	'port': args[1][2],
+	'user': username,
+	'pass': password,
+	'key': key,
+	'keypass': key_pass
+    }
+    add(data)
+
+#parser.add_option(
+#    "-g", "--get",
+#    action="store_true",
+#    dest="one",
+#    default=False,
+#    help="[optional] get one instance by host"
+#)
+#
+#parser.add_option(
+#    "-G", "--getpass",
+#    action="store_true",
+#    dest="get_pass",
+#    default=False,
+#    help="[optional] get instance password by host"
+#)
+#
+#parser.add_option(
+#    "-l", "--list",
+#    action="store_true",
+#    dest="list",
+#    default=False,
+#    help="[optional] show list"
+#)
+#
+#parser.add_option(
+#    "-a", "--add",
+#    action="store_true",
+#    dest="add",
+#    default=False,
+#    help="[optional] add an instance"
+#)
+#
+#parser.add_option(
+#    "-r", "--remove",
+#    action="store_true",
+#    dest="remove",
+#    default=False,
+#    help="[optional] remove an instance"
+#)
+#
+#parser.add_option(
+#    "-e", "--edit",
+#    action="store_true",
+#    dest="edit",
+#    default=False,
+#    help="[optional] edit an instance"
+#)
+#
+#parser.add_option(
+#    "-n", "--name",
+#    action="store",
+#    dest="name",
+#    type="string",
+#    help="[request]  local name for socket"
+#)
+#
+#parser.add_option(
+#    "-k", "--key",
+#    action="store",
+#    dest="private_key",
+#    type="string",
+#    default="",
+#    help="[optional] ssh private key absolute path, none when blank"
+#)
+#
+#parser.add_option(
+#    "-K", "--keypass",
+#    action="store",
+#    dest="key_password",
+#    type="string",
+#    default="",
+#    help="[optional] ssh private key password, none when blank"
+#)
+#
+#parser.add_option(
+#    "-i", "--instance",
+#    action="store",
+#    dest="instance",
+#    type="string",
+#    default="",
+#    help="[request]  ssh server host ip"
+#)
+#
+#parser.add_option(
+#    "-u", "--username",
+#    action="store",
+#    dest="username",
+#    type="string",
+#    default="root",
+#    help="[optional] ssh server username, 'root' when blank",
+#)
+#
+#parser.add_option(
+#    "-p", "--password",
+#    action="store",
+#    dest="password",
+#    default="",
+#    help="[request]  ssh server password"
+#)
+#
+#parser.add_option(
+#    "-P", "--port",
+#    action="store",
+#    dest="port",
+#    type="string",
+#    default="22",
+#    help="[optional] ssh server port"
+#)
+#
+#options = parser.parse_args()[0]
+#
+#private_key = ' '
+#if options.private_key is not None:
+#    private_key += '-i ' + options.private_key
+#
+#data = {
+#    'host': options.name,
+#    'addr': options.instance,
+#    'port': options.port,
+#    'user': options.username,
+#    'pass': options.password,
+#    'key': options.private_key,
+#    'keypass': options.key_password
+#}
+#
+## add an instance
+#if options.add:
+#    add(data)
+#
+## remove an instance
+#if options.remove:
+#    remove()
+#
+## get instances list 
+#if options.list:
+#    get_list()
+#
+## edit an instance
+#if options.edit:
+#    edit()
+#
+## get an instance
+#if options.one:
+#    get_one()
+#
+## get an instance password
+#if options.get_pass:
+#    get_pass()
+#

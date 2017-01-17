@@ -1,0 +1,24 @@
+#!/bin/bash
+NISHPATH=.
+#if [ $1 = "-l" ]; then 
+#    $NISHPATH/nish-db -l
+#elif [ $1 = "-h" ]; then
+#    $NISHPATH/nish-db -h
+#elif [ $1 = "-a" ]; then
+#    $NISHPATH/nish-db
+#elif [ $1 = "-d" ]; then
+#    $NISHPATH/nish-db -r -n $2
+#elif [ $1 = "-c" ]; then
+#    $NISHPATH/nish-db -c 
+#else 
+#    clear
+#    source ~/ssh-server/$1
+#fi
+
+if [ $1 = 'conn' ]; then
+    clear
+    source ~/ssh-server/$2
+else
+    $NISHPATH/nish-db $@
+fi
+
