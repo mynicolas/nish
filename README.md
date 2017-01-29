@@ -19,25 +19,25 @@ nish SUBCOMMAND ARGUMENTS
 SUBCOMMAND:
     list        list all instances
         ARGUMENTS:
-	EXAMPLE:	 'nish list'
+        EXAMPLE:	 'nish list'
 
     add	        add one instance
-        ARGUMENTS:	 NAME INFOMATION PORT
-	EXAMPLE:	 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+        ARGUMENTS:	 NAME INFOMATION PORT	
+        EXAMPLE:	 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    edit        edit an instance
-	ARGUMENTS:	 NAME INFOMATION PORT
-	EXAMPLE:	 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+    edit        edit an instance	
+        ARGUMENTS:	 NAME INFOMATION PORT
+        EXAMPLE:	 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
     remove      remove an instance
-	ARGUMENTS:	 NAME
-	EXAMPLE:	 'nish remove NAME'
+        ARGUMENTS:	 NAME
+        EXAMPLE:	 'nish remove NAME'
 
     get	        get an instance
-	ARGUMENTS:	 NAME
-	EXAMPLE:	 'nish get NAME'
+        ARGUMENTS:	 NAME
+        EXAMPLE:	 'nish get NAME'
 
     pass        get password or private key password of an instance
-	ARGUMENTS:	 NAME
-	EXAMPLE:	 'nish pass NAME'
+        ARGUMENTS:	 NAME
+        EXAMPLE:	 'nish pass NAME'
 ```
