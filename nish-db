@@ -1,23 +1,28 @@
 #!/usr/bin/env python
-from tinydb import TinyDB,where
-import os,stat
+from tinydb import TinyDB, where
+import os
+import stat
 import argparse
 from getpass import getpass
 from prettytable import PrettyTable
 
 db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
+
+# render instances
 def render(instances):
     table = PrettyTable(['index', 'name', 'address', 'port', 'username'])
     if instances:
         order = 1
         for i in instances:
-            table.add_row([str(order), i['host'], i['addr'], i['port'], i['user']])
+            table.add_row([str(order), i['host'], i[
+                          'addr'], i['port'], i['user']])
             order += 1
 
-    table.sort_key("name")  
-    table.reversesort = True  
+    table.sort_key("name")
+    table.reversesort = True
     print table.get_string()
+
 
 # add a new instance
 def add(args):
@@ -25,47 +30,48 @@ def add(args):
     addr_port = userkey_addrport[1].split(':')
     user_key = userkey_addrport[0].split('^')
     if len(user_key) == 2:
-	key = user_key[1]
-	key_pass = getpass('enter private key password (default is None): ')
-	password = ''
+        key = user_key[1]
+        key_pass = getpass('enter private key password (default is None): ')
+        password = ''
     else:
-	key = ''
-	key_pass = ''
-	while True:
-	    password = getpass('enter password: ')
-	    repeat = getpass('enter again: ')
+        key = ''
+        key_pass = ''
+        while True:
+            password = getpass('enter password: ')
+            repeat = getpass('enter again: ')
             if password is not repeat:
                 print 'passwords were not same.'
-            
 
     username = user_key[0]
     address = addr_port[0]
     port = addr_port[1]
-    
+
     data = {
-	'host': args[1][0],
-	'addr': address,
-	'port': port,
-	'user': username,
-	'pass': password,
-	'key': key,
-	'keypass': key_pass
+        'host': args[1][0],
+        'addr': address,
+        'port': port,
+        'user': username,
+        'pass': password,
+        'key': key,
+        'keypass': key_pass
     }
 
     db.insert(data)
     private_key = ''
     if data['key']:
         private_key = ' -i ' + data['key']
-   
+
     filename = os.path.expanduser('~') + '/ssh-server/' + data['host']
     with open(filename, 'w') as server:
         server.writelines([
             '#!/usr/bin/env python\n',
             '#-*- coding: utf-8 -*-\n',
-            'ssh' + private_key + ' ' + data['user'] + '@' + data['addr'] + ' -p ' + data['port']
+            'ssh' + private_key + ' ' +
+            data['user'] + '@' + data['addr'] + ' -p ' + data['port']
         ])
-    os.chmod(filename, stat.S_IRWXU) 
+    os.chmod(filename, stat.S_IRWXU)
     print "host %s added" % data['host']
+
 
 # remove an instance
 def remove(name):
@@ -74,10 +80,12 @@ def remove(name):
     if os.path.exists(filename):
         os.remove(filename)
 
+
 # get instances
 def get_list():
     instances = db.all()
     render(instances)
+
 
 # edit an instance
 def edit(data):
@@ -85,15 +93,17 @@ def edit(data):
     for item in data:
         if not data[item]:
             empty_keys.append(item)
-    
+
     for i in empty_keys:
         data.pop(i)
     db.update(data, where('host') == data['name'])
+
 
 # get an instance
 def get_one(name):
     instance = db.search(where('host') == name)
     render(instance)
+
 
 # get an instance's password
 def get_pass(name):
@@ -104,9 +114,9 @@ def get_pass(name):
             table.add_row([i['host'], i['pass'], i['key'], i['keypass']])
     print table.get_string()
 
-arg_parser= argparse.ArgumentParser(
-    description='Change the option prefix charaters', 
-    prefix_chars=' ', 
+arg_parser = argparse.ArgumentParser(
+    description='Change the option prefix charaters',
+    prefix_chars=' ',
     add_help=True
 )
 
@@ -135,4 +145,3 @@ if args[0].arg == 'remove':
 if args[0].arg == 'edit':
     remove(args[1][0])
     add(args)
-
