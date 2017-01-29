@@ -17,7 +17,7 @@ nish工具安装极其简单，需要先安装brew包管理器
 ```
 nish SUBCOMMAND ARGUMENTS
 SUBCOMMAND:
-    list	list all instances
+    list        list all instances
 	ARGUMENTS:
 	EXAMPLE:	 'nish list'
 
@@ -25,11 +25,11 @@ SUBCOMMAND:
         ARGUMENTS:	 NAME INFOMATION PORT
 	EXAMPLE:	 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    edit	edit an instance
+    edit        edit an instance
 	ARGUMENTS:	 NAME INFOMATION PORT
 	EXAMPLE:	 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    remove	remove an instance
+    remove      remove an instance
 	ARGUMENTS:	 NAME
 	EXAMPLE:	 'nish remove NAME'
 
@@ -37,7 +37,7 @@ SUBCOMMAND:
 	ARGUMENTS:	 NAME
 	EXAMPLE:	 'nish get NAME'
 
-    pass	get password or private key password of an instance
+    pass        get password or private key password of an instance
 	ARGUMENTS:	 NAME
 	EXAMPLE:	 'nish pass NAME'
 ```
