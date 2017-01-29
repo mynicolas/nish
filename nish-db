@@ -3,16 +3,21 @@ from tinydb import TinyDB,where
 import os,stat
 import argparse
 from getpass import getpass
+from prettytable import PrettyTable
 
 db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
 def render(instances):
-    print 'index\taddress\t\tport\tusername\tname'
+    table = PrettyTable(['index', 'name', 'address', 'port', 'username'])
     if instances:
         order = 1
         for i in instances:
-            print str(order) + '\t' + i['addr'] + '\t' + i['port'] + '\t' + i['user'] + '\t\t' + i['host']
+            table.add_row([str(order), i['host'], i['addr'], i['port'], i['user']])
             order += 1
+
+    table.sort_key("name")  
+    table.reversesort = True  
+    print table.get_string()
 
 # add a new instance
 def add(args):
@@ -26,7 +31,12 @@ def add(args):
     else:
 	key = ''
 	key_pass = ''
-	password = getpass('enter password: ')
+	while True:
+	    password = getpass('enter password: ')
+	    repeat = getpass('enter again: ')
+            if password is not repeat:
+                print 'passwords were not same.'
+            
 
     username = user_key[0]
     address = addr_port[0]
@@ -88,12 +98,17 @@ def get_one(name):
 # get an instance's password
 def get_pass(name):
     instances = db.search(where('host') == name)
-    print 'host\t\tpassword\t\tkey\t\tkey-password'
+    table = PrettyTable(['host', 'password', 'key', 'key-password'])
     if instances:
         for i in instances:
-            print i['host'] + '\t\t' + i['pass'] + '\t\t' + i['key'] + '\t\t' + i['keypass']
+            table.add_row([i['host'], i['pass'], i['key'], i['keypass']])
+    print table.get_string()
 
-arg_parser= argparse.ArgumentParser(description='Change the option prefix charaters', prefix_chars=' ', add_help=True)
+arg_parser= argparse.ArgumentParser(
+    description='Change the option prefix charaters', 
+    prefix_chars=' ', 
+    add_help=True
+)
 
 arg_parser.add_argument(
     "arg",
@@ -101,9 +116,6 @@ arg_parser.add_argument(
 )
 
 args = arg_parser.parse_known_args()
-#print args[0].arg
-#print args[1][0]
-#print args
 
 if args[0].arg == 'add':
     add(args)
