@@ -18,7 +18,7 @@ nish工具安装极其简单，需要先安装brew包管理器
 nish SUBCOMMAND ARGUMENTS
 SUBCOMMAND:
     list        list all instances
-	ARGUMENTS:
+        ARGUMENTS:
 	EXAMPLE:	 'nish list'
 
     add	        add one instance
