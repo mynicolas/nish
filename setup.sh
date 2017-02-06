@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "=========== install progress started =============="
+echo ">>>>>>>>>>> install progress started >>>>>>>>>>>>>>"
 echo "=========== installing requirements  =============="
 pip install -r requirements.txt
 echo "=========== copy main exec files =================="
@@ -17,4 +17,4 @@ if [ ! -d ~/ssh-server ]; then
 echo "=========== mkdir ~/ssh-server/ ==================="
     mkdir ~/ssh-server
 fi
-echo "=========== install progress ended ================"
+echo "<<<<<<<<<<< install progress ended <<<<<<<<<<<<<<<<"
