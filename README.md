@@ -38,7 +38,7 @@ SUBCOMMAND:
         ARGUMENTS:	 NAME
         EXAMPLE:	 'nish get NAME'
 
-    pass        get password or private key password of an instance
+    pass        get password or private key of an instance
         ARGUMENTS:	 NAME
         EXAMPLE:	 'nish pass NAME'
 ```

@@ -6,8 +6,8 @@ import argparse
 from getpass import getpass
 from prettytable import PrettyTable
 
-db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
+db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
 
 # render instances
 def render(instances):
