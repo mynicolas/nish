@@ -22,7 +22,7 @@ elif [ $1 = 'help' ]; then
     echo -e "\tget\tget an instance"
         echo -e "\t\tARGUMENTS:\t NAME"
     echo -e "\t\tEXAMPLE:\t 'nish get NAME'\n"
-    echo -e "\tpass\tget password or private key of an instance"
+    echo -e "\tpass\tget password or private key'password of an instance"
         echo -e "\t\tARGUMENTS:\t NAME"
     echo -e "\t\tEXAMPLE:\t 'nish pass NAME'"
 else
