@@ -1,6 +1,6 @@
 Host *
     KeepAlive yes
-    ServerAliveInterval 60
+    ServerAliveInterval 3600
     ControlMaster auto
     ControlPersist yes
     ControlPath ~/.ssh/socks/%h-%p-%r
