@@ -43,3 +43,7 @@ SUBCOMMAND:
         ARGUMENTS:	 NAME
         EXAMPLE:	 'nish pass NAME'
 ```
+
+## 蓝图
+* nish pass NAME 命令将先验证sudo密码
+* 版本自动升级，升级时自动迁移数据
