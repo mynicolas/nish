@@ -7,6 +7,7 @@
 nish工具安装极其简单，需要先安装brew包管理器
 
 * 安装brew教程见 http://brew.sh
+* 如果没有pip，需要先安装pip
 * $ git clone https://github.com/mynicolas/nish.git -b v0.11
 * $ cd nish/
 * $ bash setup.sh
