@@ -11,7 +11,7 @@ nish工具安装极其简单，需要先安装brew包管理器
 * $ cd nish/
 * $ bash setup.sh
 
-**如果不破坏系统python环境可以安装其他python环境，我用的anaconda**
+**如果不破坏系统python环境可以安装其他python环境，我用的`anaconda<https://www.continuum.io/downloads>`**
 
 ## 使用
 
