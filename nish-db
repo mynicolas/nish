@@ -39,8 +39,10 @@ def add(args):
         while True:
             password = getpass('enter password: ')
             repeat = getpass('enter again: ')
-            if password is not repeat:
+            if not password == repeat:
                 print 'passwords were not same.'
+            else:
+                break
 
     username = user_key[0]
     address = addr_port[0]
