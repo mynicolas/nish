@@ -116,6 +116,11 @@ def get_pass(name):
             table.add_row([i['host'], i['pass'], i['key'], i['keypass']])
     print table.get_string()
 
+
+# copy an instance
+def copy(name):
+    pass
+
 arg_parser = argparse.ArgumentParser(
     description='Change the option prefix charaters',
     prefix_chars=' ',
@@ -147,3 +152,6 @@ if args[0].arg == 'remove':
 if args[0].arg == 'edit':
     remove(args[1][0])
     add(args)
+
+#if args[0].arg == 'copy':
+#    add(args)

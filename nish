@@ -4,28 +4,60 @@
 if [ $1 = 'link' ]; then
     clear
     source ~/ssh-server/$2
-elif [ $1 = 'help' ]; then
-    echo "nish SUBCOMMAND ARGUMENTS"
-    echo -e "SUBCOMMAND:"
-    echo -e "\tlist\tlist all instances"
-        echo -e "\t\tARGUMENTS:"
-    echo -e "\t\tEXAMPLE:\t 'nish list'\n"
-    echo -e "\tadd\tadd one instance"
-        echo -e "\t\tARGUMENTS:\t NAME INFOMATION PORT"
-    echo -e "\t\tEXAMPLE:\t 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
-    echo -e "\tedit\tedit an instance"
-        echo -e "\t\tARGUMENTS:\t NAME INFOMATION PORT"
-    echo -e "\t\tEXAMPLE:\t 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
-    echo -e "\tremove\tremove an instance"
-        echo -e "\t\tARGUMENTS:\t NAME"
-    echo -e "\t\tEXAMPLE:\t 'nish remove NAME'\n"
-    echo -e "\tget\tget an instance"
-        echo -e "\t\tARGUMENTS:\t NAME"
-    echo -e "\t\tEXAMPLE:\t 'nish get NAME'\n"
-    echo -e "\tpass\tget password or private key'password of an instance"
-        echo -e "\t\tARGUMENTS:\t NAME"
-    echo -e "\t\tEXAMPLE:\t 'nish pass NAME'"
-else
+elif [ $1 = 'help' ] || [ $1 = '--help' ] || [ $1 = '-h' ]; then
+    if [ $2 = '-c' ]; then
+        echo -e "nish 子命令 参数"
+        echo -e "自命令:"
+        echo -e "\tlist\t列出所有实例"
+            echo -e "\t\t参数:"
+            echo -e "\t\t举例:\t 'nish list'\n"
+        echo -e "\tadd\t添加一个实例"
+            echo -e "\t\t参数:\t NAME INFOMATION:PORT"
+            echo -e "\t\t举例:\t 'nish add NAME USER@IP:PORT' 或者 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
+        echo -e "\tedit\t修改一个实例"
+            echo -e "\t\t参数:\t NAME INFOMATION PORT"
+            echo -e "\t\t举例:\t 'nish edit NAME USER@IP:PORT' 或者 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
+        echo -e "\tremove\t删除一个实例"
+            echo -e "\t\t参数:\t NAME"
+            echo -e "\t\t举例:\t 'nish remove NAME'\n"
+        echo -e "\tget\t获取指定实例信息"
+            echo -e "\t\t参数:\t NAME"
+            echo -e "\t\t举例:\t 'nish get NAME'\n"
+        echo -e "\tpass\t获取一个实例的密码或者私钥密码"
+            echo -e "\t\t参数:\t NAME"
+            echo -e "\t\t举例:\t 'nish pass NAME'\n"
+        echo -e "\thelp/--help/-h -c\tprint this doc"
+    else
+        echo -e "nish SUBCOMMAND ARGUMENTS"
+        echo -e "SUBCOMMAND:"
+        echo -e "\tlist\tlist all instances"
+            echo -e "\t\tARGUMENTS:"
+            echo -e "\t\tEXAMPLE:\t 'nish list'\n"
+        echo -e "\tadd\tadd one instance"
+            echo -e "\t\tARGUMENTS:\t NAME INFOMATION:PORT"
+            echo -e "\t\tEXAMPLE:\t 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
+        echo -e "\tedit\tedit an instance"
+            echo -e "\t\tARGUMENTS:\t NAME INFOMATION PORT"
+            echo -e "\t\tEXAMPLE:\t 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'\n"
+        echo -e "\tremove\tremove an instance"
+            echo -e "\t\tARGUMENTS:\t NAME"
+            echo -e "\t\tEXAMPLE:\t 'nish remove NAME'\n"
+        echo -e "\tget\tget an instance"
+            echo -e "\t\tARGUMENTS:\t NAME"
+            echo -e "\t\tEXAMPLE:\t 'nish get NAME'\n"
+        echo -e "\tpass\tget password or private key'password of an instance"
+            echo -e "\t\tARGUMENTS:\t NAME"
+            echo -e "\t\tEXAMPLE:\t 'nish pass NAME'\n"
+        echo -e "\thelp/--help/-h\tprint this doc"
+        echo -e "\thelp/--help/-h -h\tprint cn-ZH doc"
+    fi
+elif [ $1 = 'list' ] ||
+     [ $1 = 'add' ] ||
+     [ $1 = 'edit' ] ||
+     [ $1 = 'remove' ] ||
+     [ $1 = 'get' ] ||
+     [ $1 = 'pass' ]; then
     nish-db $@
+else
+    ssh $@
 fi
-

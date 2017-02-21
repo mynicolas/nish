@@ -6,6 +6,7 @@
 
 nish工具安装极其简单，需要先安装brew包管理器
 
+* 安装过程会将~/.ssh/config做备份并创建新的config文件，执行uninstall.sh之后会将config文件还原，请放心使用
 * 安装brew教程见 http://brew.sh
 * 如果没有pip，需要先安装pip
 * $ git clone https://github.com/mynicolas/nish.git -b v0.11
@@ -45,8 +46,16 @@ SUBCOMMAND:
         EXAMPLE:	 'nish pass NAME'
 ```
 
+## 卸载
+* $ cd nish/
+* $ bash uninstall.sh
+
 ## 蓝图
 * $ nish pass NAME 命令将先验证sudo密码
 * 版本自动升级，升级时自动迁移数据
 * 列表分页
 * 复制实例
+* 分组
+* 搜索
+
+
