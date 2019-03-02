@@ -17,33 +17,40 @@ nish工具安装极其简单，需要先安装brew包管理器
 
 ## 使用
 
-* $ nish help // 查看帮助
+* $ nish -h||-m // 查看帮助
 ```
-nish SUBCOMMAND ARGUMENTS
-SUBCOMMAND:
-    list        list all instances
-        ARGUMENTS:
-        EXAMPLE:	 'nish list'
+nish  子命令  参数(name和index可以同等使用)
+子命令:
+    list    列出所有实例
+        参数:
+        举例:    'nish list'
 
-    add	        add one instance
-        ARGUMENTS:	 NAME INFOMATION PORT	
-        EXAMPLE:	 'nish add NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+    add 添加一个实例
+        参数:    INDEX||NAME INFOMATION:PORT
+        举例:    'nish add INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    edit        edit an instance	
-        ARGUMENTS:	 NAME INFOMATION PORT
-        EXAMPLE:	 'nish edit NAME USER@IP:PORT' or 'nish NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+    edit    修改一个实例
+        参数:    NAME INFOMATION PORT
+        举例:    'nish edit INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    remove      remove an instance
-        ARGUMENTS:	 NAME
-        EXAMPLE:	 'nish remove NAME'
+    rm  删除一个实例
+        参数:    NAME
+        举例:    'nish rm INDEX||NAME'
 
-    get	        get an instance
-        ARGUMENTS:	 NAME
-        EXAMPLE:	 'nish get NAME'
+    get 获取指定实例信息
+        参数:    NAME
+        举例:    'nish get INDEX||NAME'
 
-    pass        get password or private key'password of an instance
-        ARGUMENTS:	 NAME
-        EXAMPLE:	 'nish pass NAME'
+    cp  拷贝指定实例
+        参数:    NAME
+        举例:    'nish cp INDEX||NAME NEW_NAME'
+
+    pass    获取一个实例的密码或者私钥密码
+        参数:    NAME
+        举例:    'nish pass INDEX||NAME'
+
+    -m  打印该文档
+    -h  print English help doc.
 ```
 
 ## 卸载
@@ -54,8 +61,5 @@ SUBCOMMAND:
 * $ nish pass NAME 命令将先验证sudo密码
 * 版本自动升级，升级时自动迁移数据
 * 列表分页
-* 复制实例
 * 分组
 * 搜索
-
-

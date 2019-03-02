@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from tinydb import TinyDB, where
 import os
 import stat
@@ -7,40 +8,62 @@ from getpass import getpass
 from prettytable import PrettyTable
 
 
-db = TinyDB(os.path.expanduser('~') + '/ssh-server/.servers.db')
+# 获取数据库
+db = TinyDB(os.path.expanduser('~') + '/.ssh-servers.db')
 
-# render instances
+
+# 由index或name获取完整文件名
+def get_filename(arg):
+    files = os.listdir(os.path.expanduser('~') + '/ssh-server')
+    for i in files:
+        if i.startswith(arg):
+            return i
+        elif i.endswith(arg):
+            return i
+        else:
+            continue
+
+# 由未知的index或name获取index和name字典
+def get_index_and_name(arg):
+    _fn = get_filename(arg)
+    index = _fn.split('#')[0]
+    name = _fn.split('#')[1]
+    return {'index': index, 'name': name}
+
+
+# 实例列表处理成表格
 def render(instances):
     table = PrettyTable(['index', 'name', 'address', 'port', 'username'])
     if instances:
-        order = 1
         for i in instances:
-            table.add_row([str(order), i['host'], i[
+            table.add_row([i['index'], i['host'], i[
                           'addr'], i['port'], i['user']])
-            order += 1
+#            os.rename(os.path.expanduser('~') + '/ssh-server/' + i['host'],\
+#                      os.path.expanduser('~') + '/ssh-server/' +\
+#                      str(i['index']) + '#' + i['host'])
 
-    table.sort_key("name")
-    table.reversesort = True
+    table.sortby = 'index'
+    table.reversesort = False
     print table.get_string()
 
 
-# add a new instance
+# 添加一个实例
 def add(args):
     userkey_addrport = args[1][1].split('@')
     addr_port = userkey_addrport[1].split(':')
     user_key = userkey_addrport[0].split('^')
     if len(user_key) == 2:
         key = user_key[1]
-        key_pass = getpass('enter private key password (default is None): ')
+        key_pass = getpass('输入私钥密码（默认为空）: ')
         password = ''
     else:
         key = ''
         key_pass = ''
         while True:
-            password = getpass('enter password: ')
-            repeat = getpass('enter again: ')
+            password = getpass('输入密码: ')
+            repeat = getpass('重复输入: ')
             if not password == repeat:
-                print 'passwords were not same.'
+                print '密码不匹配,请重新输入.'
             else:
                 break
 
@@ -59,57 +82,49 @@ def add(args):
     }
 
     db.insert(data)
+    this_instance = db.search(where('host') == data['host'])[0]
+    this_instance['index'] = this_instance.eid
+    db.update(this_instance, where('host') == data['host'])
     private_key = ''
     if data['key']:
         private_key = ' -i ' + data['key']
 
-    filename = os.path.expanduser('~') + '/ssh-server/' + data['host']
+    filename = os.path.expanduser('~') + '/ssh-server/' +\
+        str(this_instance['index']) + '#' + data['host']
     with open(filename, 'w') as server:
         server.writelines([
-            '#!/usr/bin/env python\n',
-            '#-*- coding: utf-8 -*-\n',
+            '#!/bin/zsh\n',
             'ssh' + private_key + ' ' +
             data['user'] + '@' + data['addr'] + ' -p ' + data['port']
         ])
     os.chmod(filename, stat.S_IRWXU)
-    print "host %s added" % data['host']
+    print "实例已添加： %s" % data['host']
 
 
-# remove an instance
-def remove(name):
-    db.remove(where('host') == name)
-    filename = os.path.expanduser('~') + '/ssh-server/' + name
+# 删除一个实例
+def remove(arg):
+    db.remove(where('host') == get_index_and_name(arg)['name'])
+    filename = os.path.expanduser('~') + '/ssh-server/' + get_filename(arg)
     if os.path.exists(filename):
         os.remove(filename)
+    print "实例已删除：%s" % arg
 
 
-# get instances
+# 获取实例列表
 def get_list():
     instances = db.all()
     render(instances)
 
 
-# edit an instance
-def edit(data):
-    empty_keys = []
-    for item in data:
-        if not data[item]:
-            empty_keys.append(item)
-
-    for i in empty_keys:
-        data.pop(i)
-    db.update(data, where('host') == data['name'])
-
-
-# get an instance
-def get_one(name):
-    instance = db.search(where('host') == name)
+# 获取一个实例详情
+def get_one(arg):
+    instance = db.search(where('host') == get_index_and_name(arg)['name'])
     render(instance)
 
 
-# get an instance's password
-def get_pass(name):
-    instances = db.search(where('host') == name)
+# 获取一个实例的密码和私钥密码
+def get_pass(arg):
+    instances = db.search(where('host') == get_index_and_name(arg)['name'])
     table = PrettyTable(['host', 'password', 'key', 'key-password'])
     if instances:
         for i in instances:
@@ -117,9 +132,40 @@ def get_pass(name):
     print table.get_string()
 
 
-# copy an instance
-def copy(name):
-    pass
+# 拷贝一个实例
+def copy(args):
+    index = get_index_and_name(args[1][0])['index']
+    new_name = args[1][1]
+    instance = db.search(where('index') == int(index))[0]
+    # 新实例
+    data = {
+        "addr": instance['addr'],
+        "host": new_name,
+        "key": instance['key'],
+        "keypass": instance['keypass'],
+        "pass": instance['pass'],
+        "port": instance['port'],
+        "user": instance['user'],
+    }
+    db.insert(data)
+    this_instance = db.search(where('host') == data['host'])[0]
+    this_instance['index'] = this_instance.eid
+    db.update(this_instance, where('host') == data['host'])
+    private_key = ''
+    if data['key']:
+        private_key = ' -i ' + data['key']
+
+    filename = os.path.expanduser('~') + '/ssh-server/' +\
+        str(this_instance['index']) + '#' + data['host']
+    with open(filename, 'w') as server:
+        server.writelines([
+            '#!/bin/zsh\n',
+            'ssh' + private_key + ' ' +
+            data['user'] + '@' + data['addr'] + ' -p ' + data['port']
+        ])
+    os.chmod(filename, stat.S_IRWXU)
+    print "实例拷贝成功，新实例：%s" % data['host']
+
 
 arg_parser = argparse.ArgumentParser(
     description='Change the option prefix charaters',
@@ -146,12 +192,16 @@ if args[0].arg == 'get':
 if args[0].arg == 'pass':
     get_pass(args[1][0])
 
-if args[0].arg == 'remove':
+if args[0].arg == 'rm':
     remove(args[1][0])
 
 if args[0].arg == 'edit':
     remove(args[1][0])
+    args[1].pop(0)
     add(args)
 
-#if args[0].arg == 'copy':
-#    add(args)
+if args[0].arg == 'cp':
+    copy(args)
+
+if args[0].arg == '--get-file':
+    print get_filename(args[1][0])
