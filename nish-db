@@ -51,6 +51,11 @@ def get_index_and_name(arg):
     return {'index': index, 'name': name}
 
 
+# 搜索功能
+def search(arg):
+    pass
+
+
 # 实例列表处理成表格
 def render(instances):
     table = PrettyTable(['index', 'name', 'address', 'port', 'username'])
