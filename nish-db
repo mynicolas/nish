@@ -29,15 +29,27 @@ def add_cata(name):
 
 
 # 删除分组
-def del_cata(name):
+def remove_cata(name):
+    insts = db_cata.get(where('name') == name)['instances']
+    def_insts = db_cata.get(where('name') == 'default')
+    def_insts['instances'] += insts
+    def_insts['name'] = 'default'
+    db_cata.update(def_insts, where('name') == 'default')
     db_cata.remove(where('name') == name)
 
 
 # 将制定实例(或列表)迁移至制定分组
 def migr_to_cata(name, *args):
+    args = [int(x) for x in args[0]]
     cata = db_cata.get(where('name') == name)
-    cata['instances'] = args
+    for i in args:
+        cata['instances'].append(i)
+
     db_cata.update(cata, where('name') == name)
+    catas = db_cata.search(where('name') != name)
+    for i in catas:
+        i['instances'] = list(set(args) ^ set(i['instances']))
+        db_cata.update(i, where('name') == i['name'])
 
 
 # 检测服务器是否存在
@@ -96,7 +108,7 @@ def render(catalogs):
     ])
     table.junction_char = '·'
 
-    for c in catalogs:
+    for m, c in enumerate(catalogs):
         for n, i in enumerate(c['instances']):
             if n == 0:
                 cata_name = c['name']
@@ -111,8 +123,7 @@ def render(catalogs):
                 inst['port'],
                 inst['user']
             ])
-
-    table.sortby = 'index'
+    # table.sortby = 'index'
     table.reversesort = False
     print table.get_string()
 
@@ -191,8 +202,14 @@ def remove(arg):
 
 
 # 获取实例列表
-def get_list():
-    catas = db_cata.all()
+def get_list(*args):
+    if args[0]:
+        cond = (where('name') == args[0][0])
+        for i in args[0]:
+            cond = (cond | (where('name') == i))
+        catas = db_cata.search(cond)
+    else:
+        catas = db_cata.all()
     render(catas)
 
 
@@ -283,7 +300,11 @@ if args[0].arg == 'add':
     add(args)
 
 if args[0].arg == 'list':
-    get_list()
+    if len(args[1]) >= 1:
+        cata = args[1]
+    else:
+        cata = ''
+    get_list(cata)
 
 if args[0].arg == 'get':
     get_one(args[1][0])
@@ -309,6 +330,6 @@ if args[0].arg == 'cata':
     if args[1][0] == 'add':
         add_cata(args[1][1])
     if args[1][0] == 'rm':
-        del_cata(args[1][1])
+        remove_cata(args[1][1])
     if args[1][0] == 'mv':
         migr_to_cata(args[1][1], args[1][2:])

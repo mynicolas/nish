@@ -21,36 +21,50 @@ nish工具安装极其简单，需要先安装brew包管理器
 ```
 nish  子命令  参数(name和index可以同等使用)
 子命令:
-    list    列出所有实例
-        参数:
-        举例:    'nish list'
+	实例操作
+	list	列出所有实例
+		参数:
+		举例:	 'nish list'
 
-    add 添加一个实例
-        参数:    INDEX||NAME INFOMATION:PORT
-        举例:    'nish add INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+	add	添加一个实例
+		参数:	 INDEX||NAME INFOMATION:PORT
+		举例:	 'nish add INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    edit    修改一个实例
-        参数:    NAME INFOMATION PORT
-        举例:    'nish edit INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+	edit	修改一个实例
+		参数:	 NAME INFOMATION PORT
+		举例:	 'nish edit INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
-    rm  删除一个实例
-        参数:    NAME
-        举例:    'nish rm INDEX||NAME'
+	rm	删除一个实例
+		参数:	 NAME
+		举例:	 'nish rm INDEX||NAME'
 
-    get 获取指定实例信息
-        参数:    NAME
-        举例:    'nish get INDEX||NAME'
+	get	获取指定实例信息
+		参数:	 NAME
+		举例:	 'nish get INDEX||NAME'
 
-    cp  拷贝指定实例
-        参数:    NAME
-        举例:    'nish cp INDEX||NAME NEW_NAME'
+	cp	拷贝指定实例
+		参数:	 NAME
+		举例:	 'nish cp INDEX||NAME NEW_NAME'
 
-    pass    获取一个实例的密码或者私钥密码
-        参数:    NAME
-        举例:    'nish pass INDEX||NAME'
+	pass	获取一个实例的密码或者私钥密码
+		参数:	 NAME
+		举例:	 'nish pass INDEX||NAME'
 
-    -m  打印该文档
-    -h  print English help doc.
+	分类操作
+	cata add	添加一个分类
+		参数:	 NAME
+		举例:	 'nish cata add NAME'
+
+	cata rm	删除一个分类
+		参数:	 NAME
+		举例:	 'nish cata rm NAME'
+
+	cata mv	将指定的实例迁移到指定的分类中
+		参数:	 CATALOG NAME [NAME1] [NAME2]
+		举例:	 'nish cata mv CATA NAME [NAME1] [NAME2]'
+
+	-m	打印该文档
+	-h	print English help doc.
 ```
 
 ## 卸载
