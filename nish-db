@@ -9,7 +9,35 @@ from prettytable import PrettyTable
 
 
 # 获取数据库
-db = TinyDB(os.path.expanduser('~') + '/.ssh-servers.db')
+db = TinyDB(os.path.expanduser('~')+'/.ssh-servers.db')
+db_inst = db.table('instances')
+db_cata = db.table('catalog')
+
+
+# 检测，保证每一个实例只能添加到一个组
+def check_inst_in_one_cata(arg):
+    pass
+
+
+# 添加分组
+def add_cata(name):
+    data = {
+        'name': name,
+        'instances': []
+    }
+    db_cata.insert(data)
+
+
+# 删除分组
+def del_cata(name):
+    db_cata.remove(where('name') == name)
+
+
+# 将制定实例(或列表)迁移至制定分组
+def migr_to_cata(name, *args):
+    cata = db_cata.get(where('name') == name)
+    cata['instances'] = args
+    db_cata.update(cata, where('name') == name)
 
 
 # 检测服务器是否存在
@@ -57,15 +85,32 @@ def search(arg):
 
 
 # 实例列表处理成表格
-def render(instances):
-    table = PrettyTable(['index', 'name', 'address', 'port', 'username'])
-    if instances:
-        for i in instances:
-            table.add_row([i['index'], i['host'], i[
-                          'addr'], i['port'], i['user']])
-#            os.rename(os.path.expanduser('~') + '/ssh-server/' + i['host'],\
-#                      os.path.expanduser('~') + '/ssh-server/' +\
-#                      str(i['index']) + '#' + i['host'])
+def render(catalogs):
+    table = PrettyTable([
+        'catalog',
+        'index',
+        'name',
+        'address',
+        'port',
+        'username'
+    ])
+    table.junction_char = '·'
+
+    for c in catalogs:
+        for n, i in enumerate(c['instances']):
+            if n == 0:
+                cata_name = c['name']
+            else:
+                cata_name = ''
+            inst = db_inst.get(where('index') == i)
+            table.add_row([
+                cata_name,
+                inst['index'],
+                inst['host'],
+                inst['addr'],
+                inst['port'],
+                inst['user']
+            ])
 
     table.sortby = 'index'
     table.reversesort = False
@@ -107,13 +152,14 @@ def add(args):
         'user': username,
         'pass': password,
         'key': key,
-        'keypass': key_pass
+        'keypass': key_pass,
+        'catalog': 'default'
     }
 
-    db.insert(data)
-    this_instance = db.search(where('host') == data['host'])[0]
+    db_inst.insert(data)
+    this_instance = db_inst.search(where('host') == data['host'])[0]
     this_instance['index'] = this_instance.eid
-    db.update(this_instance, where('host') == data['host'])
+    db_inst.update(this_instance, where('host') == data['host'])
     private_key = ''
     if data['key']:
         private_key = ' -i ' + data['key']
@@ -137,7 +183,7 @@ def remove(arg):
         print u"实例不存在，请重新指定"
         import sys
         sys.exit()
-    db.remove(where('host') == host)
+    db_inst.remove(where('host') == host)
     filename = os.path.expanduser('~') + '/ssh-server/' + get_filename(arg)
     if os.path.exists(filename):
         os.remove(filename)
@@ -146,8 +192,8 @@ def remove(arg):
 
 # 获取实例列表
 def get_list():
-    instances = db.all()
-    render(instances)
+    catas = db_cata.all()
+    render(catas)
 
 
 # 获取一个实例详情
@@ -157,7 +203,7 @@ def get_one(arg):
         print u"实例不存在，请重新指定"
         import sys
         sys.exit()
-    instance = db.search(where('host') == host)
+    instance = db_inst.search(where('host') == host)
     render(instance)
 
 
@@ -168,7 +214,7 @@ def get_pass(arg):
         print u"实例不存在，请重新指定"
         import sys
         sys.exit()
-    instances = db.search(where('host') == host)
+    instances = db_inst.search(where('host') == host)
     table = PrettyTable(['host', 'password', 'key', 'key-password'])
     if instances:
         for i in instances:
@@ -189,7 +235,7 @@ def copy(args):
         import sys
         sys.exit()
 
-    instance = db.search(where('index') == int(index))[0]
+    instance = db_inst.search(where('index') == int(index))[0]
     # 新实例
     data = {
         "addr": instance['addr'],
@@ -200,10 +246,10 @@ def copy(args):
         "port": instance['port'],
         "user": instance['user'],
     }
-    db.insert(data)
-    this_instance = db.search(where('host') == data['host'])[0]
+    db_inst.insert(data)
+    this_instance = db_inst.search(where('host') == data['host'])[0]
     this_instance['index'] = this_instance.eid
-    db.update(this_instance, where('host') == data['host'])
+    db_inst.update(this_instance, where('host') == data['host'])
     private_key = ''
     if data['key']:
         private_key = ' -i ' + data['key']
@@ -258,3 +304,11 @@ if args[0].arg == 'cp':
 
 if args[0].arg == '--get-file':
     print get_filename(args[1][0])
+
+if args[0].arg == 'cata':
+    if args[1][0] == 'add':
+        add_cata(args[1][1])
+    if args[1][0] == 'rm':
+        del_cata(args[1][1])
+    if args[1][0] == 'mv':
+        migr_to_cata(args[1][1], args[1][2:])
