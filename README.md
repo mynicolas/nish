@@ -27,27 +27,27 @@ nish  子命令  参数(name和index可以同等使用)
 		举例:	 'nish list [CATA] [CATA1]'
 
 	add	添加一个实例
-		参数:	 INDEX||NAME INFOMATION:PORT
-		举例:	 'nish add INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
+		参数:	 NAME INFOMATION:PORT
+		举例:	 'nish add NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
 	edit	修改一个实例
-		参数:	 NAME INFOMATION PORT
+		参数:	 INDEX||NAME INFOMATION PORT
 		举例:	 'nish edit INDEX||NAME USER@IP:PORT' 或者 'nish INDEX||NAME USER^PATH_TO_PRIVATE_KEY@IP:PORT'
 
 	rm	删除一个实例
-		参数:	 NAME
+		参数:	 INDEX||NAME
 		举例:	 'nish rm INDEX||NAME'
 
 	get	获取指定实例信息
-		参数:	 NAME
+		参数:	 INDEX||NAME
 		举例:	 'nish get INDEX||NAME'
 
 	cp	拷贝指定实例
-		参数:	 NAME
+		参数:	 INDEX||NAME
 		举例:	 'nish cp INDEX||NAME NEW_NAME'
 
 	pass	获取一个实例的密码或者私钥密码
-		参数:	 NAME
+		参数:	 INDEX||NAME
 		举例:	 'nish pass INDEX||NAME'
 
 	分类操作
