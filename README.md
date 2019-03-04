@@ -23,8 +23,8 @@ nish  子命令  参数(name和index可以同等使用)
 子命令:
 	实例操作
 	list	列出所有实例
-		参数:
-		举例:	 'nish list'
+		参数:    [CATA]  [CATA1] [CATA2]
+		举例:	 'nish list [CATA] [CATA1]'
 
 	add	添加一个实例
 		参数:	 INDEX||NAME INFOMATION:PORT
@@ -75,7 +75,6 @@ nish  子命令  参数(name和index可以同等使用)
 * $ nish pass NAME 命令将先验证sudo密码
 * 版本自动升级，升级时自动迁移数据
 * 列表分页
-* 分组
 * 搜索
 * 数据库加密
 * 线上备份
