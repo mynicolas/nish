@@ -195,6 +195,9 @@ def remove(arg):
         import sys
         sys.exit()
     db_inst.remove(where('host') == host)
+    catas = db_cata.all()
+    for i in catas:
+        pass
     filename = os.path.expanduser('~') + '/ssh-server/' + get_filename(arg)
     if os.path.exists(filename):
         os.remove(filename)
